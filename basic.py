@@ -90,3 +90,5 @@ aligned_seq1, aligned_seq2, alignment_cost = sequence_alignment(seq1, seq2, gap_
 print("Alignment Cost:", alignment_cost)
 print("Aligned Sequence 1:", aligned_seq1)
 print("Aligned Sequence 2:", aligned_seq2)
+
+
