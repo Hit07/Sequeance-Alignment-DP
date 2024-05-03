@@ -78,7 +78,7 @@ def read_strings_and_indices(file_path):
 
 
 # Read strings and indices from the input file
-s0, t0, list1, list2 = read_strings_and_indices('SampleTestCases/input1.txt')
+s0, t0, list1, list2 = read_strings_and_indices('SampleTestCases/input5.txt')
 
 # Process the strings and print the results
 seq1, seq2 = process_strings(s0, t0, list1, list2)
