@@ -78,6 +78,10 @@ def read_strings_and_indices(file_path):
 
 
 # Read strings and indices from the input file
+# s0, t0, list1, list2 = read_strings_and_indices('SampleTestCases/input1.txt')
+# s0, t0, list1, list2 = read_strings_and_indices('SampleTestCases/input2.txt')
+# s0, t0, list1, list2 = read_strings_and_indices('SampleTestCases/input3.txt')
+# s0, t0, list1, list2 = read_strings_and_indices('SampleTestCases/input4.txt')
 s0, t0, list1, list2 = read_strings_and_indices('SampleTestCases/input5.txt')
 
 # Process the strings and print the results
@@ -116,3 +120,8 @@ execution_time = time_wrapper()
 
 print("Execution Time:", execution_time, "milliseconds")
 print("Memory Used:", memory_used, "KB")
+
+
+
+
+
