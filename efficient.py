@@ -1,7 +1,5 @@
-import os
 import psutil
 import time
-
 
 def sequence_alignment(seq1, seq2, gap_penalty, alpha):
     # Initialize the DP matrix
@@ -27,10 +25,10 @@ def sequence_alignment(seq1, seq2, gap_penalty, alpha):
     while i > 0 or j > 0:
         if i > 0 and dp[i][j] == dp[i - 1][j] + gap_penalty:
             aligned_seq1 = seq1[i - 1] + aligned_seq1
-            aligned_seq2 = '-' + aligned_seq2
+            aligned_seq2 = '_' + aligned_seq2
             i -= 1
         elif j > 0 and dp[i][j] == dp[i][j - 1] + gap_penalty:
-            aligned_seq1 = '-' + aligned_seq1
+            aligned_seq1 = '_' + aligned_seq1
             aligned_seq2 = seq2[j - 1] + aligned_seq2
             j -= 1
         else:
@@ -38,10 +36,62 @@ def sequence_alignment(seq1, seq2, gap_penalty, alpha):
             aligned_seq2 = seq2[j - 1] + aligned_seq2
             i -= 1
             j -= 1
-
     return aligned_seq1, aligned_seq2, dp[len(seq1)][len(seq2)]
 
+def spaceEfficientAlignment( X, Y, flag,gap_penalty, alpha):
+    dp = []
+    for i in range(2):
+        dp.append([0] * (len(Y) + 1))
+    for i in range(len(Y) + 1):
+        dp[0][i] = gap_penalty * i
 
+    if flag == 0:
+        for i in range(1, len(X) + 1):
+            dp[1][0] = i * gap_penalty
+            for j in range(1, len(Y) + 1):
+                dp[1][j] = min(dp[0][j - 1] + alpha[X[i - 1] + Y[j - 1]],
+                                dp[0][j] + gap_penalty,
+                                dp[1][j - 1] + gap_penalty)
+            # dp[0] = dp[1]
+            for j in range(len(Y)+1):
+                dp[0][j] = dp[1][j]
+    elif flag == 1:
+        for i in range(1, len(X) + 1):
+            dp[1][0] = i * gap_penalty
+            for j in range(1, len(Y) + 1):
+                dp[1][j] = min(dp[0][j - 1] + alpha[X[len(X) - i] + Y[len(Y) - j]],
+                                dp[0][j] + gap_penalty,
+                                dp[1][j - 1] + gap_penalty)
+            for j in range(len(Y) + 1):
+                dp[0][j] = dp[1][j]
+    final = dp[1]
+
+    return final
+
+
+def DandC(str1, str2,gap_penalty, alpha):
+    m = len(str1)
+    n = len(str2)
+    if m < 2 or n < 2:
+        return sequence_alignment(str1, str2,gap_penalty, alpha)
+    else:
+        firstHalf = spaceEfficientAlignment(str1[:m // 2], str2, 0,gap_penalty, alpha)
+        # print("firstHalf:", firstHalf)
+        # print("firstHalf:", len(firstHalf))
+        secondHalf = spaceEfficientAlignment(str1[m // 2:],
+                                                  str2, 1,gap_penalty, alpha)
+        # print("secondHalf:", secondHalf)
+        # print("secondHalf:", len(secondHalf))
+        newArray = [firstHalf[j] + secondHalf[n - j] for j in range(n + 1)]
+        # newArray = firstHalf + secondHalf[::-1]
+        # print("newArray:", len(newArray))
+        q = newArray.index(min(newArray))
+        # print("q:", q)
+        callLeft = DandC(str1[:len(str1) // 2], str2[:q], gap_penalty, alpha)
+        callRight = DandC(str1[len(str1) // 2:], str2[q:], gap_penalty, alpha)
+        l = [callLeft[r] + callRight[r] for r in range(3)]
+        # print(l)
+    return [callLeft[r] + callRight[r] for r in range(3)]
 def insert_string_at_indices(base_string, indices):
     result = base_string
     for idx in indices:
@@ -79,16 +129,9 @@ def read_strings_and_indices(file_path):
     return s0, t0, s_indices, t_indices
 
 
-def process_memory():
-    process = psutil.Process()
-    memory_info = process.memory_info()
-    memory_consumed = int(memory_info.rss / 1024)  # in KB
-    return memory_consumed
-
-
 if __name__ == '__main__':
     # Read strings and indices from the input file
-    s0, t0, list1, list2 = read_strings_and_indices('SampleTestCases/input3.txt')
+    s0, t0, list1, list2 = read_strings_and_indices('SampleTestCases/input5.txt')
 
     # Process the strings and print the results
     seq1, seq2 = process_strings(s0, t0, list1, list2)
@@ -99,20 +142,19 @@ if __name__ == '__main__':
     alpha = {'AA': 0, 'AC': 110, 'AG': 48, 'AT': 94, 'CA': 110, 'CC': 0, 'CG': 118,'CT': 48, 'GA': 48, 'GC': 118, 'GG': 0, 'GT':110, 'TA': 94, 'TC': 48, 'TG': 110, 'TT': 0}
 
     start_time = time.time()
+    process = psutil.Process()
     # Perform alignment and measure memory and time
-    aligned_seq1, aligned_seq2, alignment_cost = sequence_alignment(seq1, seq2, gap_penalty, alpha)
+    aligned_seq1, aligned_seq2, alignment_cost = DandC(seq1, seq2, gap_penalty, alpha)
 
     end_time = time.time()
     time_taken = (end_time - start_time) * 1000
 
+    memory_info = process.memory_info()
+    memory_consumed = int(memory_info.rss / 1024)  # in KB
+
     print("Alignment Cost:", alignment_cost)
     print("Aligned Sequence 1:", aligned_seq1)
     print("Aligned Sequence 2:", aligned_seq2)
-
-    memory_used = psutil.Process(os.getpid()).memory_info().rss / 1024
-    #memory_used = process_memory()
-
     print("Execution Time:", time_taken, "milliseconds")
-    print("Memory Used:", memory_used, "KB")
-
+    print("Memory Used:", memory_consumed, "KB")
 
