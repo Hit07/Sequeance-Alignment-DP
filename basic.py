@@ -1,3 +1,4 @@
+import os
 import psutil
 import time
 
@@ -26,10 +27,10 @@ def sequence_alignment(seq1, seq2, gap_penalty, alpha):
     while i > 0 or j > 0:
         if i > 0 and dp[i][j] == dp[i - 1][j] + gap_penalty:
             aligned_seq1 = seq1[i - 1] + aligned_seq1
-            aligned_seq2 = '_' + aligned_seq2
+            aligned_seq2 = '-' + aligned_seq2
             i -= 1
         elif j > 0 and dp[i][j] == dp[i][j - 1] + gap_penalty:
-            aligned_seq1 = '_' + aligned_seq1
+            aligned_seq1 = '-' + aligned_seq1
             aligned_seq2 = seq2[j - 1] + aligned_seq2
             j -= 1
         else:
@@ -78,9 +79,16 @@ def read_strings_and_indices(file_path):
     return s0, t0, s_indices, t_indices
 
 
+def process_memory():
+    process = psutil.Process()
+    memory_info = process.memory_info()
+    memory_consumed = int(memory_info.rss / 1024)  # in KB
+    return memory_consumed
+
+
 if __name__ == '__main__':
     # Read strings and indices from the input file
-    s0, t0, list1, list2 = read_strings_and_indices('SampleTestCases/input5.txt')
+    s0, t0, list1, list2 = read_strings_and_indices('SampleTestCases/input3.txt')
 
     # Process the strings and print the results
     seq1, seq2 = process_strings(s0, t0, list1, list2)
@@ -91,19 +99,18 @@ if __name__ == '__main__':
     alpha = {'AA': 0, 'AC': 110, 'AG': 48, 'AT': 94, 'CA': 110, 'CC': 0, 'CG': 118,'CT': 48, 'GA': 48, 'GC': 118, 'GG': 0, 'GT':110, 'TA': 94, 'TC': 48, 'TG': 110, 'TT': 0}
 
     start_time = time.time()
-    process = psutil.Process()
     # Perform alignment and measure memory and time
     aligned_seq1, aligned_seq2, alignment_cost = sequence_alignment(seq1, seq2, gap_penalty, alpha)
 
     end_time = time.time()
     time_taken = (end_time - start_time) * 1000
 
-    memory_info = process.memory_info()
-    memory_consumed = int(memory_info.rss / 1024)  # in KB
-
     print("Alignment Cost:", alignment_cost)
     print("Aligned Sequence 1:", aligned_seq1)
     print("Aligned Sequence 2:", aligned_seq2)
-    print("Execution Time:", time_taken, "milliseconds")
-    print("Memory Used:", memory_consumed, "KB")
 
+    memory_used = psutil.Process(os.getpid()).memory_info().rss / 1024
+    #memory_used = process_memory()
+
+    print("Execution Time:", time_taken, "milliseconds")
+    print("Memory Used:", memory_used, "KB")
