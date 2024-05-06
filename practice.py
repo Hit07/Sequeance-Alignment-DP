@@ -1,3 +1,4 @@
+import os
 import psutil
 import time
 
@@ -53,6 +54,7 @@ def process_strings(s0, t0, list1, list2):
     t_result = insert_string_at_indices(t0, list2)
     return s_result, t_result
 
+
 def read_strings_and_indices(file_path):
     with open(file_path, 'r') as file:
         # Read the first string (s0)
@@ -77,23 +79,6 @@ def read_strings_and_indices(file_path):
     return s0, t0, s_indices, t_indices
 
 
-# Read strings and indices from the input file
-# s0, t0, list1, list2 = read_strings_and_indices('SampleTestCases/input1.txt')
-# s0, t0, list1, list2 = read_strings_and_indices('SampleTestCases/input2.txt')
-# s0, t0, list1, list2 = read_strings_and_indices('SampleTestCases/input3.txt')
-# s0, t0, list1, list2 = read_strings_and_indices('SampleTestCases/input4.txt')
-s0, t0, list1, list2 = read_strings_and_indices('SampleTestCases/input5.txt')
-
-# Process the strings and print the results
-seq1, seq2 = process_strings(s0, t0, list1, list2)
-print("seq1:", seq1)
-print("seq2:", seq2)
-
-gap_penalty = 30
-alpha = {'AA': 0, 'AC': 110, 'AG': 48, 'AT': 94, 'CA': 110, 'CC': 0, 'CG': 118,'CT': 48, 'GA': 48, 'GC': 118, 'GG': 0, 'GT':110, 'TA': 94, 'TC': 48, 'TG': 110, 'TT': 0}
-
-
-# Calculate memory consumption
 def process_memory():
     process = psutil.Process()
     memory_info = process.memory_info()
@@ -101,27 +86,33 @@ def process_memory():
     return memory_consumed
 
 
-# Calculate time taken
-def time_wrapper():
+if __name__ == '__main__':
+    # Read strings and indices from the input file
+    s0, t0, list1, list2 = read_strings_and_indices('SampleTestCases/input3.txt')
+
+    # Process the strings and print the results
+    seq1, seq2 = process_strings(s0, t0, list1, list2)
+    print("seq1:", seq1)
+    print("seq2:", seq2)
+
+    gap_penalty = 30
+    alpha = {'AA': 0, 'AC': 110, 'AG': 48, 'AT': 94, 'CA': 110, 'CC': 0, 'CG': 118,'CT': 48, 'GA': 48, 'GC': 118, 'GG': 0, 'GT':110, 'TA': 94, 'TC': 48, 'TG': 110, 'TT': 0}
+
     start_time = time.time()
+    # Perform alignment and measure memory and time
     aligned_seq1, aligned_seq2, alignment_cost = sequence_alignment(seq1, seq2, gap_penalty, alpha)
+
     end_time = time.time()
-    time_taken = (end_time - start_time) * 1000  # in milliseconds
-    return time_taken
+    time_taken = (end_time - start_time) * 1000
 
-# Perform alignment and measure memory and time
-aligned_seq1, aligned_seq2, alignment_cost = sequence_alignment(seq1, seq2, gap_penalty, alpha)
-print("Alignment Cost:", alignment_cost)
-print("Aligned Sequence 1:", aligned_seq1)
-print("Aligned Sequence 2:", aligned_seq2)
+    print("Alignment Cost:", alignment_cost)
+    print("Aligned Sequence 1:", aligned_seq1)
+    print("Aligned Sequence 2:", aligned_seq2)
 
-memory_used = process_memory()
-execution_time = time_wrapper()
+    memory_used = psutil.Process(os.getpid()).memory_info().rss / 1024
+    #memory_used = process_memory()
 
-print("Execution Time:", execution_time, "milliseconds")
-print("Memory Used:", memory_used, "KB")
-
-
-
+    print("Execution Time:", time_taken, "milliseconds")
+    print("Memory Used:", memory_used, "KB")
 
 
