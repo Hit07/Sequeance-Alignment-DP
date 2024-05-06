@@ -186,3 +186,4 @@ print("Aligned Sequence 2:", finalAlignments[1])
 print("Final Alignment Cost:", finalAlignmentCost)
 print("Execution Time (ms):", (finish_time - start_time) * 1000)
 print("Memory Consumed (KB):", memoryNeeded)
+
