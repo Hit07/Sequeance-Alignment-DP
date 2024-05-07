@@ -94,17 +94,17 @@ def get_aligned_sequeance(input_file, output_file):
     '''File writing'''
     memory_used = psutil.Process(os.getpid()).memory_info().rss / 1024
     with open(output_file, 'w') as f:
-        f.write(f"Alignment Cost: {alignment_cost}\n")
-        f.write(f"Aligned Sequence 1: {aligned_seq1}\n")
-        f.write(f"Aligned Sequence 2: {aligned_seq2}\n")
-        f.write(f"Execution Time: {time_taken} milli\n")
-        f.write(f"Memory Used: {memory_used} KB\n")
+        f.write(f"Alignment Cost: {alignment_cost}\n Aligned Sequence 1: {aligned_seq1}\nAligned Sequence 2: {aligned_seq2}\n"
+                f"Time Taken: {time_taken} ms\nMemory Used: {memory_used} KB")
 
 
 if __name__ == '__main__':
     if len(sys.argv) != 3:
-        print("Usage: python Basic.py <input_file> <output_file>")
+        print("Usage: python3 script.py <input_file> <output_file>")
         sys.exit(1)
     input_file = sys.argv[1]
     output_file = sys.argv[2]
     get_aligned_sequeance(input_file, output_file)
+
+
+
