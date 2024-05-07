@@ -94,8 +94,7 @@ def get_aligned_sequeance(input_file, output_file):
     '''File writing'''
     memory_used = psutil.Process(os.getpid()).memory_info().rss / 1024
     with open(output_file, 'w') as f:
-        f.write(f"Alignment Cost: {alignment_cost}\n Aligned Sequence 1: {aligned_seq1}\nAligned Sequence 2: {aligned_seq2}\n"
-                f"Time Taken: {time_taken} ms\nMemory Used: {memory_used} KB")
+        f.write(f"{alignment_cost}\n{aligned_seq1}\n{aligned_seq2}\n{time_taken}\n{memory_used}")
 
 
 if __name__ == '__main__':

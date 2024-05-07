@@ -7,6 +7,8 @@ import time
 DELTA = 30
 ALPHA = {'AA': 0, 'AC': 110, 'AG': 48, 'AT': 94, 'CA': 110, 'CC': 0, 'CG': 118, 'CT': 48, 'GA': 48, 'GC': 118,
          'GG': 0, 'GT': 110, 'TA': 94, 'TC': 48, 'TG': 110, 'TT': 0}
+
+
 def sequence_alignment(seq1, seq2, DELTA, ALPHA):
     # Initialize the DP matrix and fill in the first row and column with gap penalties
     dp = [[0] * (len(seq2) + 1) for _ in range(len(seq1) + 1)]
@@ -137,8 +139,7 @@ def get_aligned_sequeance(input_file, output_file):
     '''File writing'''
     memory_used = psutil.Process(os.getpid()).memory_info().rss / 1024
     with open(output_file, 'w') as f:
-        f.write(f"Alignment Cost: {alignment_cost}\nAligned Sequence 1: {aligned_seq1}\nAligned Sequence 2: {aligned_seq2}\n"
-                f"Time Taken: {time_taken} ms\nMemory Used: {memory_used} KB")
+        f.write(f"{alignment_cost}\n{aligned_seq1}\n{aligned_seq2}\n{time_taken}\n{memory_used}")
 
 
 if __name__ == '__main__':
