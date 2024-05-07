@@ -89,7 +89,6 @@ def time_wrapper(seq1, seq2, DELTA, ALPHA):
 def get_aligned_sequeance(input_file, output_file):
     s0, t0, list1, list2 = get_string(input_file)
     seq1, seq2 = transform_string(s0, t0, list1, list2)
-    print(f"Sequence 1: {seq1}\nSequence 2: {seq2}")
     aligned_seq1, aligned_seq2, alignment_cost,time_taken = time_wrapper(seq1, seq2, DELTA, ALPHA)
     '''File writing'''
     memory_used = psutil.Process(os.getpid()).memory_info().rss / 1024

@@ -46,50 +46,48 @@ def sequence_alignment(seq1, seq2, DELTA, ALPHA):
 
     return aligned_seq1, aligned_seq2, dp[len(seq1)][len(seq2)]
 
-def space_efficient_alignment( X, Y, flag, DELTA, ALPHA):
+def space_efficient_alignment( A, B, flag, DELTA, ALPHA):
     dp = []
     for i in range(2):
-        dp.append([0] * (len(Y) + 1))
-    for i in range(len(Y) + 1):
+        dp.append([0] * (len(B) + 1))
+    for i in range(len(B) + 1):
         dp[0][i] = DELTA * i
 
-    if flag == 0:
-        for i in range(1, len(X) + 1):
+    if flag:
+        for i in range(1, len(A) + 1):
             dp[1][0] = i * DELTA
-            for j in range(1, len(Y) + 1):
-                dp[1][j] = min(dp[0][j - 1] +ALPHA[X[i - 1] + Y[j - 1]],
+            for j in range(1, len(B) + 1):
+                dp[1][j] = min(dp[0][j - 1] +ALPHA[A[len(A) - i] + B[len(B) - j]],
                                 dp[0][j] + DELTA,
                                 dp[1][j - 1] + DELTA)
-            # dp[0] = dp[1]
-            for j in range(len(Y)+1):
+            for j in range(len(B) + 1):
                 dp[0][j] = dp[1][j]
-    elif flag == 1:
-        for i in range(1, len(X) + 1):
+    else:
+        for i in range(1, len(A) + 1):
             dp[1][0] = i * DELTA
-            for j in range(1, len(Y) + 1):
-                dp[1][j] = min(dp[0][j - 1] +ALPHA[X[len(X) - i] + Y[len(Y) - j]],
+            for j in range(1, len(B) + 1):
+                dp[1][j] = min(dp[0][j - 1] +ALPHA[A[i - 1] + B[j - 1]],
                                 dp[0][j] + DELTA,
                                 dp[1][j - 1] + DELTA)
-            for j in range(len(Y) + 1):
+            for j in range(len(B)+1):
                 dp[0][j] = dp[1][j]
-
-
     return dp[1]
 
 
-def Divide_Conquer(str1, str2, DELTA , ALPHA):
-    m = len(str1)
-    n = len(str2)
+def Divide_Conquer(seq1, seq2, DELTA , ALPHA):
+    m = len(seq1)
+    n = len(seq2)
     if m < 2 or n < 2:
-        return sequence_alignment(str1, str2,DELTA, ALPHA)
+        return sequence_alignment(seq1, seq2,DELTA, ALPHA)
     else:
-        firstHalf = space_efficient_alignment(str1[:m // 2], str2, 0,DELTA, ALPHA)
-        secondHalf = space_efficient_alignment(str1[m // 2:], str2, 1,DELTA, ALPHA)
-        newArray = [firstHalf[j] + secondHalf[n - j] for j in range(n + 1)]
-        q = newArray.index(min(newArray))
-        callLeft = Divide_Conquer(str1[:len(str1) // 2], str2[:q], DELTA, ALPHA)
-        callRight = Divide_Conquer(str1[len(str1) // 2:], str2[q:], DELTA, ALPHA)
-    return [callLeft[r] + callRight[r] for r in range(3)]
+        part_1 = space_efficient_alignment(seq1[:m // 2], seq2, 0,DELTA, ALPHA)
+        part_2 = space_efficient_alignment(seq1[m // 2:], seq2, 1,DELTA, ALPHA)
+        arr = [part_1[j] + part_2[n - j] for j in range(n + 1)]
+        q = arr.index(min(arr))
+        left = Divide_Conquer(seq1[:len(seq1) // 2], seq2[:q], DELTA, ALPHA)
+        right = Divide_Conquer(seq1[len(seq1) // 2:], seq2[q:], DELTA, ALPHA)
+        res = [left[r] + right[r] for r in range(3)]
+    return res[0], res[1], res[2]
 
 
 
@@ -134,7 +132,6 @@ def time_wrapper(seq1, seq2, DELTA, ALPHA):
 def get_aligned_sequeance(input_file, output_file):
     s0, t0, list1, list2 = get_string(input_file)
     seq1, seq2 = transform_string(s0, t0, list1, list2)
-    print(f"Sequence 1: {seq1}\nSequence 2: {seq2}")
     aligned_seq1, aligned_seq2, alignment_cost,time_taken = time_wrapper(seq1, seq2, DELTA, ALPHA)
     '''File writing'''
     memory_used = psutil.Process(os.getpid()).memory_info().rss / 1024
